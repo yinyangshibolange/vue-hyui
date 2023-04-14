@@ -48,6 +48,7 @@ export function clone (obj) {
  * @param {Function} callback tempFiles, failFiles
  */
 export function chooseFiles (options, callback) {
+   console.log(options)
    const { accept, multiple, size, } = options
    const input = document.createElement("input")
    input.accept = accept
@@ -65,15 +66,22 @@ export function chooseFiles (options, callback) {
             }
          }
          if (accept) {
-            let reg
-            if (/[a-zA-Z]+\/\*/.test(accept)) {
-               const m = accept.match(/([a-zA-Z]+)\/\*/)
-               reg = new RegExp(m + "/[a-zA-Z]+")
-            } else {
-               reg = new RegExp(accept)
+            const accs = accept.split(",").map(item => item.trim())
+            let reg_result = false
+            for (let j = 0; j < accs.length; j++) {
+               if (/[a-zA-Z]+\/\*/.test(accs[j])) {
+                  const m = accs[j].match(/([a-zA-Z]+)\/\*/)
+                  console.log(new RegExp(m[1] + "/[a-zA-Z]+"))
+                  reg_result = new RegExp(m[1] + "/[a-zA-Z]+").test(item.type)
+               } else {
+                  console.log(new RegExp(accs[j]))
+                  reg_result = new RegExp(accs[j]).test(item.type)
+               }
+               if(reg_result) {
+                  break
+               }
             }
-            console.log(reg)
-            if (!reg.test(item.type)) {
+            if (!reg_result) {
                failFiles.push(item)
                continue
             }
@@ -111,5 +119,40 @@ export function findTargetEl (el, options) {
       }
    } else {
       return null
+   }
+}
+
+let options_list = []
+function documentClick(ev){
+   options_list.forEach(item => {
+      const {el, callback} = item
+      if(!el || !el.getBoundingClientRect || typeof callback !== 'function') return
+      const {clientX, clientY} = ev
+      console.log(el)
+      const { left, bottom, right, top } = el.getBoundingClientRect()
+
+      console.log({ left, bottom, right, top })
+      if(clientX > left && clientX < right && clientY> top && clientY < bottom) {
+         return callback(true)
+      } else {
+         return callback(false)
+      }
+   })
+
+}
+
+export function addDocumentClickListener(options) {
+   if(!options_list || options_list.length === 0) {
+      document.addEventListener("click", documentClick)
+   }
+   if(!options_list.includes(options)) options_list.push(options)
+}
+
+export function removeDocumentClickListener(options) {
+   if(options_list.includes(options)) {
+      options_list.splice(options_list.indexOf(options), 1)
+   }
+   if(!options_list || options_list.length === 0) {
+      document.removeEventListener("click", documentClick)
    }
 }

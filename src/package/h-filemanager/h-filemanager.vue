@@ -153,6 +153,7 @@ export default {
           multiple: true,
         },
         async (tempFiles) => {
+          console.log(tempFiles)
           const loading = this.$loading({
             lock: true,
             text: "上传中",

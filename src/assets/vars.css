@@ -2,7 +2,7 @@
  --h-primary-color: #2c80ff;
  --h-info-color: #aba8a8;
  --h-danger-color: #ff533c;
- --h-important-color: #ffaa3c;
+ --h-warning-color: #ffaa3c;
  --h-success-color: #49fa0e;
  --h-pur-color: #e32bff;
  --h-girl-color: #fe56cb;
@@ -10,7 +10,7 @@
  --h-primary-color-hover: #2c80ffbb;
  --h-info-color-hover: #aba8a8bb;
  --h-danger-color-hover: #ff533cbb;
- --h-important-color-hover: #ffaa3cbb;
+ --h-warning-color-hover: #ffaa3cbb;
  --h-success-color-hover: #49fa0ebb;
  --h-pur-color-hover: #e32bffbb;
  --h-girl-color-hover: #fe56cbbb;

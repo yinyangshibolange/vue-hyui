@@ -50,7 +50,6 @@ export default {
    }
   },
   currentLabel () {
-   console.log(this.selectList, this.selectValue)
    return (this.selectList.find(item => item[this.valueKey] === this.selectValue) || {})[this.labelKey]
   }
  },
@@ -78,7 +77,6 @@ export default {
    this.setValue(item[this.valueKey])
   },
   setValue (value) {
-   console.log(value)
    this.selectValue = value
    this.triggerSelectList()
   },
@@ -89,7 +87,6 @@ export default {
      const { left, bottom, right, top } = el.getBoundingClientRect()
      const { offsetWidth, offsetHeight } = this.$refs.hSelectItemsRef
 
-     console.log({ left, bottom, right, top }, { offsetWidth, offsetHeight })
     }
    }
    this.isActive = !this.isActive

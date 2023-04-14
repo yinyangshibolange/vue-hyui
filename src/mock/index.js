@@ -18,7 +18,5 @@ const MockStore = new IndexdbStore({
   }
  ]
 })
-
-console.log(MockStore)
-
+ 
 imageMockInstall(Mock, MockStore)

@@ -18,6 +18,12 @@ import hSelectItem from './h-select/h-select-item.vue'
 import hPagination from "./h-pagination/h-pagination.vue"
 import hButton from "./h-button/h-button.vue"
 import hInput from "./h-input/h-input.vue"
+import hFall from "./h-fall/h-fall.vue"
+import hNotice from "./h-notice/h-notice.vue"
+import hSearch from "./h-search/h-search.vue"
+import hRouter from "./h-router/h-router.vue"
+import hSwiper from "./h-swiper/h-swiper.vue"
+import hSwiperItem from "./h-swiper/h-swiper-item.vue"
 
 // 注册
 const install = function (app) {
@@ -39,6 +45,12 @@ const install = function (app) {
  app.component("h-pagination", hPagination)
  app.component("h-button", hButton)
  app.component("h-input", hInput)
+ app.component("h-fall", hFall)
+ app.component("h-notice", hNotice)
+ app.component("h-search", hSearch)
+ app.component("h-router", hRouter)
+ app.component("h-swiper", hSwiper)
+ app.component("h-swiper-item", hSwiperItem)
 }
 
 window.createRightMenu = createRightMenu

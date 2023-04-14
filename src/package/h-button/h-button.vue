@@ -12,7 +12,6 @@ export default {
   block: Boolean,
  },
  mounted() {
-  console.log(this.$slots)
  },
  methods: {
   emitClick(ev) {

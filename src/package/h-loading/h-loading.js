@@ -99,5 +99,9 @@ export default function (type, option = {}) {
 
   return loadingAnimation
  } 
+
+ return {
+  close: function(){}
+ }
 }
 

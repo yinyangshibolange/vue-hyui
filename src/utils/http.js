@@ -36,7 +36,10 @@ axios_instance.interceptors.response.use(function (response) {
   }
 
   if (response.status === 200) {
-    return response.data
+    if( response.data) {
+      return  response.data
+    }
+    return response
   } else {
     // 对响应数据做点什么
     return response;
