@@ -4,12 +4,12 @@
             zIndex: zIndex,
             ...maskStyle,
         }"></div>
-        <div  class="h-dialog-content" @click.stop :style="{
-           zIndex: zIndex + 1,
+        <div class="h-dialog-content" @click.stop :style="{
+            zIndex: zIndex + 1,
             width: typeof width === 'number' ? width + 'px' : width,
             ...contentStyle,
         }">
-        <slot></slot>
+            <slot></slot>
         </div>
     </div>
 </template>
@@ -29,11 +29,11 @@ export default {
         },
         showMask: {
             type: Boolean,
-            default:true,
+            default: true,
         },
         clickMaskClose: {
             type: Boolean,
-            default:true,
+            default: true,
         },
         maskStyle: {
             type: Object,
@@ -46,9 +46,9 @@ export default {
     },
     methods: {
         maskClose () {
-            if(this.clickMaskClose) {
+            if (this.clickMaskClose) {
                 this.$emit("update:visible", false)
-            this.$emit("close")
+                this.$emit("close")
             }
         }
     }

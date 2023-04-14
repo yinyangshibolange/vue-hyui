@@ -52,40 +52,40 @@
          :page-sizes="[10, 20, 30]" :total="listTotal"
         @change-page="changePage" @change-pagesize="handleSizeChange"></h-pagination>
     </div>
-
-    <hDialog title="新建文件夹" :visible.sync="dirShow" append-to-body>
-      <h-form ref="dirFormRef" :model="dirForm" :rules="nameRules">
+    <h-input v-model="dirFormName" placeholder="请输入文件夹名称" ></h-input>
+    <h-dialog title="新建文件夹" :visible.sync="dirShow" append-to-body>
+          <h-input v-model="dirForm.name" placeholder="请输入文件夹名称" ></h-input>
+      <!-- <h-form ref="dirFormRef" :model="dirForm" :rules="nameRules">
         <h-form-item prop="name" label="文件夹名称">
           <h-input v-model="dirForm.name" placeholder="请输入文件夹名称" />
         </h-form-item>
-      </h-form>
-        <button @click="dirShow = false">取消</button>
-        <button type="primary" @click="submitDir">提交</button>
-    </hDialog>
+      </h-form> -->
+        <h-button @click="dirShow = false">取消</h-button>
+        <h-button type="primary" @click="submitDir">提交</h-button>
+    </h-dialog>
 
-    <hDialog title="重命名" :visible.sync="renameShow" append-to-body>
+    <h-dialog title="重命名" :visible.sync="renameShow" append-to-body>
       <h-form ref="renameFormRef" :model="renameForm" :rules="nameRules">
         <h-form-item prop="name" label="名称">
           <h-input v-model="renameForm.name" placeholder="请输入名称" />
         </h-form-item>
       </h-form>
 
-      <button @click="renameShow = false">取消</button>
-      <button type="primary" @click="submitRename">提交</button>
-    </hDialog>
+      <h-button @click="renameShow = false">取消</h-button>
+      <h-button type="primary" @click="submitRename">提交</h-button>
+    </h-dialog>
   </div>
 </template>
 
 <script>
 import * as utils from "../../utils";
-import hDialog from "../h-dialog/h-dialog.vue"
 import keydown_mixin from "../../utils/keydown.js"
 export default {
   name: "h-filemanager",
   mixins: [keydown_mixin],
-  components: { hDialog },
   data () {
     return {
+      dirFormName: "",
       dataForm: {
         page: 0,
         pagesize: 10,
@@ -806,7 +806,7 @@ export default {
         document.onmousemove = null
         document.onmouseup = null
         ev.stopPropagation()
-        ev.preventDefault()
+        // ev.preventDefault()
       }
     }
   },

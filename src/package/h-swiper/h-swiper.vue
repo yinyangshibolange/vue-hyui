@@ -21,7 +21,10 @@ export default {
         indicatorDots: Boolean, // 点
         indicatorColor: String,
         indicatorActiveColor: String,
-        current: Number,
+        current: {
+            type: Number,
+            default: 0,
+        },
         interval: {
             type: Number,
             default: 3000

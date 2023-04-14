@@ -4,6 +4,7 @@
 
 <script>
 export default {
+ name: "h-input",
  props: {
   value: {
    type: [String, Number,],

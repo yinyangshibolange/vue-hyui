@@ -18,6 +18,14 @@
       <h-breadcrumb-item></h-breadcrumb-item>
     </h-breadcrumb>
    </div>
+
+   <div>
+    <h-input v-model="inputval"></h-input>
+   </div>
+
+   <div>
+    <h-filemanager></h-filemanager>
+   </div>
   </div>
 </template>
 
@@ -29,6 +37,7 @@ export default {
   },
   data () {
     return {
+      inputval: "",
       swiperList: [{src: require('@/assets/swiper/2.png')},{src: require('@/assets/swiper/3.png')}],
       routerList: [{
         name: "表单",

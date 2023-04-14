@@ -1,4 +1,4 @@
-import utils from "../../utils"
+import * as utils from "../../utils"
 
 function readFile (file) {
  return new Promise((resolve, reject) => {

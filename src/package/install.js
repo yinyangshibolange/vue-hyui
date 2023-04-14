@@ -22,6 +22,7 @@ import hFall from "./h-fall/h-fall.vue"
 import hNotice from "./h-notice/h-notice.vue"
 import hSearch from "./h-search/h-search.vue"
 import hRouter from "./h-router/h-router.vue"
+import hDialog from "./h-dialog/h-dialog.vue"
 import hSwiper from "./h-swiper/h-swiper.vue"
 import hSwiperItem from "./h-swiper/h-swiper-item.vue"
 
@@ -50,6 +51,7 @@ const install = function (app) {
  app.component("h-search", hSearch)
  app.component("h-router", hRouter)
  app.component("h-swiper", hSwiper)
+ app.component("h-dialog", hDialog)
  app.component("h-swiper-item", hSwiperItem)
 }
 
