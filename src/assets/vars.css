@@ -19,10 +19,37 @@
 
  --h-padding: 10px 20px;
  --h-border-radius: 12px;
+ --h-border-bigger-radius: 12px;
  --h-form-input-min-width: 200px;
  --h-gutter-width: 12px;
 
  --h-fontsize-small: 12px;
  --h-fontsize-middle: 16px;
  --h-fontsize-large: 19px;
+}
+
+.h-btn {
+ padding: var(--h-padding);
+ border-radius: var(--h-border-radius);
+}
+
+.border-card {
+box-sizing: border-box;
+padding: 12px;
+}
+
+.border-card.bigger {
+ border-radius: var(--h-border-bigger-radius);
+ padding: 20px;
+}
+
+.border-card.primary {
+ border: 2px solid var(--h-primary-color);
+}
+
+.border-card-header {
+ display: flex;
+ justify-content: space-between;
+ border-bottom: 2px solid var(--h-primary-color);
+ padding-bottom: 15px;
 }

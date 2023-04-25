@@ -1,29 +1,22 @@
 <template>
-  <div @contextmenu="containermenu($event)" @mousedown="containermousedown">
-    <div class="align-center">
-      <h-breadcrumb separator="/">
-        <h-breadcrumb-item v-for="(item, index) in pidpaths" :key="index">
-          <span v-if="index === pidpaths.length - 1">{{ item.name }}</span>
-          <a v-else type="text" @click="clickPath(item)" style="color: #6a62f2">{{
-            item.name
-          }}</a>
-        </h-breadcrumb-item>
+  <div class="border-card primary bigger" @contextmenu="containermenu($event)" @mousedown="containermousedown">
+    <div class="border-card-header">
+      <div class="align-center">
+      <h-breadcrumb separator="/" :list="pidpaths" @bread-click="clickPath" @bread-back="pidback">
       </h-breadcrumb>
-
-      <h-button v-if="Array.isArray(pidpaths) && pidpaths.length > 1" type="text" @click="pidback"
-        style="margin-left: 12px; cursor: pointer;">返回上一层</h-button>
     </div>
 
-    <div style="margin-top: 20px">
+    <div >
       <h-button type="primary" size="small" @click="upload">上传</h-button>
       <h-button type="primary" size="small" @click="addDir">新建文件夹</h-button>
       <h-button v-if="show_paste" size="small" type="primary" @click="pasteHere">粘贴到此</h-button>
       <h-button type="primary" size="small" @click="getImageList()">刷新</h-button>
-      <h-button type="primary" size="small">同步到服务器</h-button>
+      <!-- <h-button type="primary" size="small">同步到服务器</h-button> -->
       <!-- <h-button type="primary"  size="small" >排序方式</h-button> -->
       <!-- <h-button type="danger"  size="small"  @click="shear()">批量剪切</h-button>
       <h-button type="danger"  size="small"  @click="delItems()">批量删除</h-button> -->
       <!-- <h-button type="danger"  size="small"  @click="flatAll()">全部拉平</h-button> -->
+    </div>
     </div>
 
     <div class="image-container">
@@ -52,14 +45,12 @@
          :page-sizes="[10, 20, 30]" :total="listTotal"
         @change-page="changePage" @change-pagesize="handleSizeChange"></h-pagination>
     </div>
-    <h-input v-model="dirFormName" placeholder="请输入文件夹名称" ></h-input>
     <h-dialog title="新建文件夹" :visible.sync="dirShow" append-to-body>
-          <h-input v-model="dirForm.name" placeholder="请输入文件夹名称" ></h-input>
-      <!-- <h-form ref="dirFormRef" :model="dirForm" :rules="nameRules">
+      <h-form ref="dirFormRef" :model="dirForm" :rules="nameRules">
         <h-form-item prop="name" label="文件夹名称">
           <h-input v-model="dirForm.name" placeholder="请输入文件夹名称" />
         </h-form-item>
-      </h-form> -->
+      </h-form>
         <h-button @click="dirShow = false">取消</h-button>
         <h-button type="primary" @click="submitDir">提交</h-button>
     </h-dialog>
@@ -131,6 +122,23 @@ export default {
       },
     };
   },
+  props: {
+    multiple: { // 是否可多穿
+      type: Boolean,
+      default: true,
+    },
+    size: {
+      type: Number, // 限制文件大小
+    },
+    fileKey: {
+      type: String,
+      default: 'file'
+    },
+    parentidKey: {
+      type: String,
+      default: 'parentid'
+    }
+  },
   computed: {
     show_paste () {
       // 是否显示粘贴
@@ -150,10 +158,9 @@ export default {
       utils.chooseFiles(
         {
           accept: "image/*",
-          multiple: true,
+          multiple: this.multiple,
         },
         async (tempFiles) => {
-          console.log(tempFiles)
           const loading = this.$loading({
             lock: true,
             text: "上传中",
@@ -163,9 +170,9 @@ export default {
           // todo // 构想 // 上传将图片shift到列表中，一个一个加载上传进度
           for (let i = 0; i < tempFiles.length; i++) {
             const formData = new FormData();
-            formData.append("file", tempFiles[i]);
+            formData.append(this.fileKey, tempFiles[i]);
             formData.append(
-              "parentid",
+              this.parentidKey,
               this.pidpaths[this.pidpaths.length - 1].parentid
             );
             const res = await this.$axios.post("/api/upload", formData, {
@@ -217,7 +224,7 @@ export default {
     async getImageList () {
       const res = await this.$axios.get(
         `/api/imageList?page=${this.dataForm.page}&pagesize=${this.dataForm.pagesize
-        }&parentid=${this.pidpaths[this.pidpaths.length - 1].parentid}`
+        }&${this.parentidKey}=${this.pidpaths[this.pidpaths.length - 1].parentid}`
       );
       if (res.code === 0) {
         this.list = res.data.list;
@@ -234,19 +241,18 @@ export default {
     /**
      * 新建文件夹提交
      */
-    submitDir () {
-      this.$refs.dirFormRef && this.$refs.dirFormRef.validate(async valid => {
-        if (valid) {
-          const res = await this.$axios.post("/api/addDir", {
+   async submitDir () {
+      if(this.$refs.dirFormRef && this.$refs.dirFormRef.validate()) {
+        const res = await this.$axios.post("/api/addDir", {
             ...this.dirForm,
-            parentid: this.pidpaths[this.pidpaths.length - 1].parentid,
+            [this.parentidKey]: this.pidpaths[this.pidpaths.length - 1].parentid,
           });
           if (res.code === 0) {
             this.getImageList();
             this.dirShow = false;
           }
-        }
-      })
+      }
+  
 
     },
     /**
@@ -293,7 +299,7 @@ export default {
       const parentid = this.pidpaths[this.pidpaths.length - 1].parentid || "";
       const res = await this.$axios.put("/api/imagebatch", this.shearList && this.shearList.map(item => ({
         ...item,
-        parentid: parentid,
+        [this.parentidKey]: parentid,
       })));
       console.log(res)
       this.shearList = [];
@@ -429,8 +435,8 @@ export default {
      * 点击面包屑
      * @param {*} item
      */
-    clickPath (item) {
-      const index = this.pidpaths.findIndex((item1) => item1 === item);
+    clickPath (index) {
+      console.log(index)
       this.pidpaths = this.pidpaths.slice(0, index + 1);
       this.dataForm.page = this.pidpaths[this.pidpaths.length - 1].page
       this.dataForm.pagesize = this.pidpaths[this.pidpaths.length - 1].pagesize
@@ -507,7 +513,7 @@ export default {
               if (!Array.isArray(this.selectList) || this.selectList.length === 0) return
               await this.$axios.put("/api/imagebatch", this.selectList.map(item => ({
                 ...item,
-                parentid: target_item.id,
+                [this.parentidKey]: target_item.id,
               })))
               this.getImageList()
               this.$message.success("移动成功");
@@ -611,14 +617,6 @@ export default {
       if (fold_item.dir) {
         this.$createRightMenu(clientX, clientY, [
           {
-            icon_class: "icon-upload",
-            text: "同步到服务器",
-            click: (item) => {
-              this.disband_fold(fold_item.id, fold_item.parentid || "");
-              console.log(item)
-            },
-          },
-          {
             icon_class: "icon-folder-opened",
             text: "打开",
             click: (item) => {
@@ -648,21 +646,12 @@ export default {
             icon_class: "",
             text: "解散",
             click: (item) => {
-              this.disband_fold(fold_item.id, fold_item.parentid || "");
-              console.log(item)
+              this.disband_fold(fold_item.id, fold_item[this.parentidKey] || "");
             },
           },
         ]);
       } else {
         this.$createRightMenu(clientX, clientY, [
-          {
-            icon_class: "icon-upload",
-            text: "同步到服务器",
-            click: (item) => {
-              this.disband_fold(fold_item.id, fold_item.parentid || "");
-              console.log(item)
-            },
-          },
           {
             icon_class: "icon-download",
             text: "下载",

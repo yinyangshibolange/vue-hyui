@@ -1,5 +1,5 @@
 <template>
-    <div v-show="visible" class="h-dialog">
+    <div v-show="visible" class="h-dialog ">
         <div v-show="showMask" class="h-dialog-mask" @click="maskClose" :style="{
             zIndex: zIndex,
             ...maskStyle,
@@ -57,6 +57,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@keyframes dialog-fade-in {
+    0% {
+        transform: translate(-50%, calc(-50% + 100px));
+        opacity: 0.1;
+    }
+
+
+
+    100% {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+    }
+}
 .h-dialog {
     .h-dialog-mask {
         position: fixed;
@@ -77,6 +90,8 @@ export default {
         padding: 20px;
         min-height: 200px;
         box-shadow: var(--h-box-shadow-small);
+
+        animation: dialog-fade-in 0.3s ease-in-out ;
     }
 }
 </style>

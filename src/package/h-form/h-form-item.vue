@@ -1,6 +1,9 @@
 <template>
 <div class="h-form-item">
+ <label for="">{{ label }}</label>
  <slot></slot>
+
+ <div v-if="errmsg">{{ errmsg }}</div>
 </div>
 </template>
 
@@ -13,7 +16,7 @@ export default {
   },
   label: {
    type: String,
-  }
+  },
  },
  data() {
   return {
