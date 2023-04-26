@@ -7,6 +7,7 @@ import http  from "./utils/http"
 
 Vue.config.productionTip = false
 
+
 Vue.use(installs)
 
 Vue.prototype.$axios = http

@@ -40,6 +40,14 @@ export default {
 .h-input {
  font-size: var(--h-fontsize-middle);
  padding: var(--h-padding);
+    outline-color: var(--h-e2-color);
+
+ &:focus {
+    outline-color: var(--h-primary-color);
+/* To change the border color of the input when it is focused, 
+   change the value of the outline-color property to the desired theme color */
+// border: 2px solid var(--h-primary-color);
+ }
 
  &.small {
   font-size: var(--h-fontsize-small);

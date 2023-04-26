@@ -6,6 +6,8 @@
  --h-success-color: #49fa0e;
  --h-pur-color: #e32bff;
  --h-girl-color: #fe56cb;
+ --h-grey-color: #cccccc;
+ --h-e2-color: #e2e2e2;
 
  --h-primary-color-hover: #2c80ffbb;
  --h-info-color-hover: #aba8a8bb;
@@ -14,6 +16,7 @@
  --h-success-color-hover: #49fa0ebb;
  --h-pur-color-hover: #e32bffbb;
  --h-girl-color-hover: #fe56cbbb;
+ --h-grey-color-hover: #ccccccbb;
 
  --h-box-shadow-small: 0 0 5px rgba(0,0,0,0.2);
 
@@ -52,4 +55,9 @@ padding: 12px;
  justify-content: space-between;
  border-bottom: 2px solid var(--h-primary-color);
  padding-bottom: 15px;
+}
+
+.border-card-footer {
+    padding-top: 15px;
+ border-top: 2px solid var(--h-primary-color);
 }

@@ -26,4 +26,24 @@ export default {
 }
 </script>
 
+<style scoped lang="scss">
+.h-form-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
 
+  label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+}
+
+</style>

@@ -1,5 +1,6 @@
 // css variable
 import "../assets/vars.css"
+import "../assets/flex.css"
 
 // foriegn
 import 'animate.css';

@@ -97,11 +97,16 @@ export default {
 
 <style lang="scss" scoped>
 .h-select {
+width: 100%;
+height: 100%;
  &-value {
-  min-width: var(--h-form-input-min-width);
-  padding: var(--h-padding);
-  border: 2px solid var(--h-primary-color);
-  border-radius: var(--h-border-radius);
+//   min-width: var(--h-form-input-min-width);
+//   padding: var(--h-padding);
+width: 100%;
+height: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
 
   &-text {
    color: #000;
