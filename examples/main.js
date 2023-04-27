@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
-import installs from "./package/install"
+import installs from "../package/install"
 import "./mock"
-import http  from "./utils/http"
+import http  from "../utils/http"
 
 
 Vue.config.productionTip = false

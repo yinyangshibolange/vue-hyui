@@ -19,6 +19,7 @@
  --h-grey-color-hover: #ccccccbb;
 
  --h-box-shadow-small: 0 0 5px rgba(0,0,0,0.2);
+ --h-box-shadow-bigger: 0 0 10px rgba(0,0,0,0.2);
 
  --h-padding: 10px 20px;
  --h-border-radius: 12px;
@@ -44,10 +45,23 @@ padding: 12px;
 .border-card.bigger {
  border-radius: var(--h-border-bigger-radius);
  padding: 20px;
+ 
 }
 
 .border-card.primary {
  border: 2px solid var(--h-primary-color);
+}
+
+.border-card.e2 {
+    border: 1px solid var(--h-e2-color);
+}
+
+
+.border-card.primary.shadow  {
+    box-shadow: 0 0 5px var(--h-primary-color-hover);
+}
+.border-card.primary.bigger.shadow {
+    box-shadow: 0 0 10px var(--h-primary-color-hover);
 }
 
 .border-card-header {
@@ -60,4 +74,19 @@ padding: 12px;
 .border-card-footer {
     padding-top: 15px;
  border-top: 2px solid var(--h-primary-color);
+}
+
+.border-small {
+    border-width: 1px;
+}
+
+.border-bigger {
+    border-width: 2px;
+}
+
+.border-e2 {
+    border-color: var(--h-e2-color);
+}
+.border-primary {
+    border-color: var(--h-primary-color);
 }

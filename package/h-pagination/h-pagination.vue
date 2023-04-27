@@ -2,12 +2,12 @@
     <div class="h-pagination">
         <div class="h-pagination-total">共{{ total }}条数据</div>
         <ul>
-            <li><a>&lt;</a></li>
+            <li><a @click="prevPage">&lt;</a></li>
             <li v-for="(item, index) in pages" :key="index" :class="{ active: item.page === currentPage }">
-                <a v-if="item.type === 'page'">{{ item.page }}</a>
+                <a v-if="item.type === 'page'" @click="changePage(item.page)">{{ item.page }}</a>
                 <span v-else>{{ item.name }}</span>
             </li>
-            <li><a>&gt;</a></li>
+            <li><a @click="nextPage">&gt;</a></li>
         </ul>
         <div class="h-pagesize-selector">
             <!-- <h-select v-model="currentPagesize" :list="pageSizes.map(item => ({ label: item, value: item }))">
@@ -110,6 +110,12 @@ export default {
         }
     },
     watch: {
+        page(page) { this.currentPage = page },
+        pagesize(pagesize) { this.currentPagesize = pagesize },
+        currentPage(page) {
+            this.$emit("change-page", page)
+            this.$emit("update:page", page)
+        },
         currentPagesize(pagesize) {
             this.$emit("change-pagesize", pagesize)
             this.$emit("update:pagesize", pagesize)
@@ -132,12 +138,32 @@ export default {
             this.$emit("change-page", page)
             this.$emit("update:page", page)
         },
+        prevPage() {
+            let all_pages = Math.ceil(this.total / this.pagesize)
+            if (all_pages === 1) return
+            if (this.currentPage === 1) {
+                this.currentPage = all_pages
+            } else {
+                this.currentPage = this.currentPage - 1
+
+            }
+        },
+        nextPage() {
+            let all_pages = Math.ceil(this.total / this.pagesize)
+            if (all_pages === 1) return
+            if (this.currentPage === all_pages) {
+                this.currentPage = 1
+            } else {
+                this.currentPage = this.currentPage + 1
+            }
+        }
     }
 }
 </script>
 
 <style lang="scss" scoped>
 $h-page-height: 37px;
+
 .h-pagination {
     display: flex;
     justify-content: space-between;
@@ -176,6 +202,7 @@ $h-page-height: 37px;
                 width: 100%;
                 height: 100%;
                 cursor: pointer;
+                line-height: $h-page-height;
 
                 &:hover {
                     background: var(--h-primary-color-hover);

@@ -50,6 +50,11 @@ export default {
 
  .h-breadcrumb-item {
   &>a {
+    display: inline-block;
+    max-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
    &:not(:last-child) {
     cursor: pointer;
     text-decoration: underline;
@@ -57,6 +62,15 @@ export default {
     //  content: "/";
     // }
    }
+  }
+
+  &>span {
+    display: inline-block;
+    max-width: 70px;
+    margin: 0 7px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
  }

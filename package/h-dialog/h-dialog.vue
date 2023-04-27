@@ -3,23 +3,29 @@
         <div v-show="showMask" class="h-dialog-mask" @click="maskClose" :style="{
                 zIndex: zIndex,
                 ...maskStyle,
-            }"></div>
-        <div class="h-dialog-container" @click.stop :style="{
-                zIndex: zIndex + 1,
-                width: typeof width === 'number' ? width + 'px' : width,
-                ...contentStyle,
             }">
-            <div class="h-dialog-header">
-                <div class="h-dialog-title">{{ title }}</div>
-            </div>
-            <div class="h-dialog-content">
-                <slot></slot>
-            </div>
 
-            <div v-show="showFooter" class="h-dialog-footer">
-                <slot name="footer"></slot>
+            <div class="h-dialog-container" @click.stop :style="{
+                    zIndex: zIndex + 1,
+                    width: typeof width === 'number' ? width + 'px' : width,
+                    ...contentStyle,
+                }">
+                <div v-show="showHeader" class="h-dialog-header">
+                    <slot name="header"></slot>
+                </div>
+                <div v-show="title && !showHeader" class="h-dialog-header">
+                    <div  class="h-dialog-title">{{ title }}</div>
+                </div>
+                <div class="h-dialog-content">
+                    <slot></slot>
+                </div>
+
+                <div v-show="showFooter" class="h-dialog-footer">
+                    <slot name="footer"></slot>
+                </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -60,6 +66,18 @@ export default {
     computed: {
         showFooter() {
             return !!this.$slots.footer
+        },
+        showHeader() {
+            return !!this.$slots.header
+        }
+    },
+    watch: {
+        visible(vs) {
+            if (vs) {
+                document.body.style.overflow = 'hidden'
+            } else {
+                document.body.style.overflow = 'auto'
+            }
         }
     },
     methods: {
@@ -77,14 +95,14 @@ export default {
 <style scoped lang="scss">
 @keyframes dialog-fade-in {
     0% {
-        transform: translate(-50%, calc(-50% + 100px));
-        opacity: 0.1;
+        transform: translate(0, 100px);
+        opacity: 0;
     }
 
 
 
     100% {
-        transform: translate(-50%, -50%);
+        transform: translate(0, 0);
         opacity: 1;
     }
 }
@@ -96,14 +114,18 @@ export default {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.2),
+        background: rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        align-items: center;
     }
 
     .h-dialog-container {
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+        position: relative;
+        top: 0;
+        bottom: 0;
+        margin: auto auto;
         background: #fff;
         border-radius: 12px;
         padding: 20px;
@@ -129,6 +151,6 @@ export default {
         border-top: 2px solid #f2f2f2;
     }
 
-  
+
 }
 </style>
