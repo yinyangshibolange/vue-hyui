@@ -175,6 +175,8 @@ $h-page-height: 37px;
         list-style: none;
         padding: 0;
         margin: 0;
+        display: flex;
+        align-items: center;
 
         &>li {
             border: 2px solid var(--h-primary-color);

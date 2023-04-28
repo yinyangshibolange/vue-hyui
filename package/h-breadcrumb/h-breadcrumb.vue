@@ -2,7 +2,7 @@
  <div class="h-breadcrumb h-btn">
   <div class="h-breadcrumb-ct">
    <div v-for="(item, index) in list" :key="index" class="h-breadcrumb-item">
-    <a @click="clickHandle(index)">{{ item.name }}</a>
+    <a @click="clickHandle(index)">{{ item[nameKey] }}</a>
 
     <span v-if="index < list.length - 1">{{ separator }}</span>
    </div>
@@ -24,6 +24,10 @@ export default {
   list: {
    type: Array,
    default: () => []
+  },
+  nameKey: {
+    type: String,
+    default: "name"
   }
  },
  methods: {

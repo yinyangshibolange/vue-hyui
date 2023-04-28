@@ -3,7 +3,7 @@
     @mousedown="containermousedown">
     <div class="border-card-header">
       <div class="align-center">
-        <h-breadcrumb separator="/" :list="pidpaths" @bread-click="clickPath" @bread-back="pidback">
+        <h-breadcrumb separator="/" :list="pidpaths" :nameKey="titleKey" @bread-click="clickPath" @bread-back="pidback">
         </h-breadcrumb>
       </div>
 
@@ -31,13 +31,13 @@
           <i class="icon-folder"></i>
         </div> -->
         <div class="image">
-          <img v-if="item[dirFlagKey]" class="image-dir" src="../../assets/文件夹.png" alt="" />
+          <img v-if="item[dirFlagKey]" class="image-dir" src="../assets/文件夹.png" alt="" />
           <img v-else class="image-image" :src="item.url" alt="" />
         </div>
 
         <div class="image-name">
           <!-- <input v-if="item.rename_active" v-model="item.name" @keyup.enter="item.rename_active=undefined;updateItem(item);"> -->
-          <span>{{ item.name }}</span>
+          <span>{{ item[titleKey] }}</span>
         </div>
       </div>
     </div>
@@ -90,20 +90,20 @@ import axios from "../../utils/http";
 export default {
   name: "h-filemanager",
   mixins: [keydown_mixin],
-  data () {
+  data() {
     return {
       dirFormName: "",
       dataForm: {
-        page: 0,
+        page: 1,
         pagesize: 10,
-        parentid: "", // 父节点id，如果没有那么就是全部
+        [this.parentidKey]: "", // 父节点id，如果没有那么就是全部
         searchText: "", // 搜索内容，如果存在那么就是搜索全部，将pid清空
       },
       pidpaths: [
         {
-          name: "全部",
-          parentid: "",
-          page: 0,
+          [this.titleKey]: "全部",
+          [this.parentidKey]: this.defaultDirId,
+          page: 1,
           pagesize: 10,
         },
       ],
@@ -111,15 +111,17 @@ export default {
       listTotal: 0,
 
       dirForm: {
-
+        [this.dirNameKey]: "",
+        [this.parentidKey]: ""
       },
       dirShow: false,
       renameForm: {
+        [this.dirNameKey]: ""
       },
       renameShow: false,
 
       nameRules: {
-        name: [
+        [this.dirNameKey]: [
           { required: true, message: '请输入名称', trigger: 'blur' },
         ],
       },
@@ -166,11 +168,11 @@ export default {
       type: String,
     },
 
-    fileKey: {
+    fileKey: { // 上传文件字段
       type: String,
       default: 'file'
     },
-    parentidKey: {
+    parentidKey: { // 父节点字段
       type: String,
       default: 'parentid'
     },
@@ -186,15 +188,22 @@ export default {
       type: String,
       default: "pagesize"
     },
-    dirNameKey: {
+    dirNameKey: { // 文件夹名称，
       type: String,
       default: "name"
     },
-
+    titleKey: { // 文件名称
+      type: String,
+      default: "name"
+    },
     // 必传，文件夹关键字段，默认dir
     dirFlagKey: {
       type: String,
       default: "dir"
+    },
+    defaultDirId: { // 默认查询dir地址
+      type: String,
+      default: ""
     },
     uploadFunc: Function, // 上传
     getImageListFunc: Function, // 获取列表
@@ -208,22 +217,14 @@ export default {
     disband_foldFunc: Function, // 解散文件夹
   },
   computed: {
-    show_paste () {
+    show_paste() {
       // 是否显示粘贴
       return Array.isArray(this.shearList) && this.shearList.length > 0;
     },
   },
-  mounted () {
+  mounted() {
     this.refreshImageList();
-    this.dirForm[this.dirNameKey] = ""
-    this.dirForm[this.parentidKey] = ""
-    this.renameForm[this.dirNameKey] = ""
 
-    this.nameRules = {
-      [this.dirNameKey]: [
-        { required: true, message: '请输入名称', trigger: 'blur' },
-      ],
-    }
   },
   methods: {
     // set_imageItemHeight() {
@@ -235,7 +236,7 @@ export default {
     /**
      * 上传文件
      */
-    upload () {
+    upload() {
       utils.chooseFiles(
         {
           accept: "image/*",
@@ -258,12 +259,13 @@ export default {
             formData.append(this.fileKey, tempFiles[i]);
             formData.append(
               this.parentidKey,
-              this.pidpaths[this.pidpaths.length - 1].parentid
+              this.pidpaths[this.pidpaths.length - 1][this.parentidKey]
             );
             if (this.uploadFunc) {
               try {
                 const res = await this.uploadFunc(formData)
                 reslist.push(res)
+
               } catch (err) {
                 console.error(err)
                 reslist.push(null)
@@ -292,7 +294,7 @@ export default {
     /**
      * 刷新
      */
-    async refreshImageList () {
+    async refreshImageList() {
       if (this.dataForm.page === 1 && this.dataForm.pagesize === 10) {
         this.getImageList();
       } else {
@@ -307,7 +309,7 @@ export default {
      * 分页页面点击
      * @param {number} p
      */
-    changePage (p) {
+    changePage(p) {
       this.dataForm.page = p
       this.pidpaths[this.pidpaths.length - 1].page = p
       this.getImageList()
@@ -315,7 +317,7 @@ export default {
     /**
      * 每页数量改变
      */
-    handleSizeChange (ps) {
+    handleSizeChange(ps) {
       this.dataForm.page = 1
       this.pidpaths[this.pidpaths.length - 1].page = 1
       this.dataForm.pagesize = ps
@@ -325,16 +327,19 @@ export default {
     /**
      * 获取文件/文件夹列表
      */
-    async getImageList () {
+    async getImageList() {
       if (this.getImageListFunc) {
         const params = {
           [this.pageKey]: this.dataForm.page,
           [this.pagesizeKey]: this.dataForm.pagesize,
-          [this.parentidKey]: this.pidpaths[this.pidpaths.length - 1].parentid,
+          [this.parentidKey]: this.pidpaths[this.pidpaths.length - 1][this.parentidKey],
           [this.searchKey]: this.dataForm.searchText
         }
         try {
           const { list, total } = await this.getImageListFunc(params)
+          if (list && list.length > 0) {
+            this.pidpaths[0][this.parentidKey] = list[0][this.parentidKey]
+          }
           this.list = list;
           this.listTotal = total
           this.selectList = [];
@@ -345,7 +350,7 @@ export default {
         try {
           const res = await axios.get(
             `${this.getListUrl}?${this.pageKey}=${this.dataForm.page}&${this.pagesizeKey}=${this.dataForm.pagesize
-            }&${this.parentidKey}=${this.pidpaths[this.pidpaths.length - 1].parentid}&${this.searchKey}=${this.dataForm.searchText}`
+            }&${this.parentidKey}=${this.pidpaths[this.pidpaths.length - 1][this.parentidKey]}&${this.searchKey}=${this.dataForm.searchText}`
           );
           if (res.code === 0) {
             this.list = res.data.list;
@@ -361,25 +366,25 @@ export default {
     /**
      * 搜索文件/文件夹
      */
-    searchSubmit () {
+    searchSubmit() {
       this.getImageList()
     },
     /**
      * 弹出新建文件夹
      */
-    addDir () {
+    addDir() {
       this.dirShow = true;
     },
     /**
      * 新建文件夹提交
      */
-    async submitDir () {
+    async submitDir() {
       if (this.$refs.dirFormRef && this.$refs.dirFormRef.validate()) {
         if (this.submitDirFunc) {
           try {
             const res = await this.submitDirFunc({
               ...this.dirForm,
-              [this.parentidKey]: this.pidpaths[this.pidpaths.length - 1].parentid,
+              [this.parentidKey]: this.pidpaths[this.pidpaths.length - 1][this.parentidKey],
             })
             this.$emit("after-add-dir", res)
             this.getImageList();
@@ -391,7 +396,7 @@ export default {
           try {
             const res = await axios.post(this.addDirUrl, {
               ...this.dirForm,
-              [this.parentidKey]: this.pidpaths[this.pidpaths.length - 1].parentid,
+              [this.parentidKey]: this.pidpaths[this.pidpaths.length - 1][this.parentidKey],
             });
             if (res.code === 0) {
               this.getImageList();
@@ -409,7 +414,7 @@ export default {
     /**
      * rename
      */
-    async submitRename () {
+    async submitRename() {
       if (this.$refs.dirFormRef && this.$refs.dirFormRef.validate()) {
         const renameList = this.selectList.map(item => ({
           ...item,
@@ -441,7 +446,7 @@ export default {
      * 修改文件/文件夹数据
      * @param {*} item
      */
-    async updateItem (item) {
+    async updateItem(item) {
       const res = await axios.put(this.putUrl, item);
       if (res.code === 0) {
         this.getImageList();
@@ -450,7 +455,7 @@ export default {
     /**
      * 批量粘贴，from剪切
      */
-    async pasteHere (ev) {
+    async pasteHere(ev) {
       if (ev) {
         ev.stopPropagation()
         ev.preventDefault()
@@ -459,7 +464,7 @@ export default {
         this.$message.error("请先剪切内容")
         return
       }
-      const parentid = this.pidpaths[this.pidpaths.length - 1].parentid || "";
+      const parentid = this.pidpaths[this.pidpaths.length - 1][this.parentidKey] || "";
 
       try {
         if (this.pasteHereFunc) {
@@ -482,7 +487,7 @@ export default {
 
 
     },
-    async disband_fold (id, targetid) {
+    async disband_fold(id, targetid) {
       try {
         if (this.disband_foldFunc) {
           const res = await this.disband_foldFunc({
@@ -506,7 +511,7 @@ export default {
     /**
      * 批量删除/删除
      */
-    async delItems (id) {
+    async delItems(id) {
       let ids = "";
       if (id) {
         // 非批量删除
@@ -541,7 +546,7 @@ export default {
     /**
      * flatAll
      */
-    async flatAll () {
+    async flatAll() {
       const res = await axios.post(`/api/flatall`);
       if (res.code === 0) {
         this.$message.success("成功");
@@ -552,11 +557,11 @@ export default {
      * 双机文件/文件夹
      * @param {*} item
      */
-    clickFoldItem (item) {
+    clickFoldItem(item) {
       if (item[this.dirFlagKey]) {
         this.pidpaths.push({
-          name: item.name,
-          parentid: item.id,
+          [this.titleKey]: item[this.titleKey],
+          [this.parentidKey]: item.id,
           page: 1,
           pagesize: 10,
         });
@@ -567,7 +572,7 @@ export default {
      * 选择文件/文件夹
      * @param {*} item
      */
-    selectItem (click_index, clicktype) {
+    selectItem(click_index, clicktype) {
       const item = this.list[click_index]
       const findIndex = this.selectList.findIndex((item1) => item1 === item);
 
@@ -621,7 +626,7 @@ export default {
     /**
      * 剪切
      */
-    shear (ev) {
+    shear(ev) {
       if (ev) {
         ev.stopPropagation()
         ev.preventDefault()
@@ -637,7 +642,7 @@ export default {
      * 点击面包屑
      * @param {*} item
      */
-    clickPath (index) {
+    clickPath(index) {
       console.log(index)
       this.pidpaths = this.pidpaths.slice(0, index + 1);
       this.dataForm.page = this.pidpaths[this.pidpaths.length - 1].page
@@ -647,7 +652,7 @@ export default {
     /**
      * 返回面包屑上一层
      */
-    pidback () {
+    pidback() {
       this.pidpaths = this.pidpaths.slice(0, this.pidpaths.length - 1);
       this.dataForm.page = this.pidpaths[this.pidpaths.length - 1].page
       this.dataForm.pagesize = this.pidpaths[this.pidpaths.length - 1].pagesize
@@ -658,7 +663,7 @@ export default {
      * @param {*} down_ev
      * @param {*} fold_index
      */
-    mouseDown (down_ev, fold_index) {
+    mouseDown(down_ev, fold_index) {
       down_ev.stopPropagation();
       down_ev.preventDefault();
 
@@ -752,7 +757,7 @@ export default {
      * 事件处理
      * @param {*} move_ev 鼠标移动事件
      */
-    move_deel (move_ev) {
+    move_deel(move_ev) {
       const { clientX, clientY } = move_ev;
       for (let index = 0; index < this.list.length; index++) {
         if (this.selectList.includes(this.list[index])) {
@@ -785,7 +790,7 @@ export default {
      * @param {*} up_ev
      * @param {*} callback
      */
-    move_end_deel (up_ev, callback) {
+    move_end_deel(up_ev, callback) {
       const { clientX, clientY } = up_ev;
       let target_index = -1
       for (let index = 0; index < this.list.length; index++) {
@@ -821,7 +826,7 @@ export default {
      * @param {*} ev
      * @param {*} fold_index
      */
-    contextmenu (ev, fold_index,) {
+    contextmenu(ev, fold_index,) {
       if (ev) { // 默认阻止
         ev.stopPropagation();
         ev.preventDefault();
@@ -851,7 +856,7 @@ export default {
             icon_class: "icon-scissors",
             text: "剪切",
             custom_style: {
-              display: !this.pasteHereFunc ? 'none' : 'block',
+              display: !this.pasteHereFunc ? 'none' : 'flex',
             },
             click: (item) => {
               this.shearList = this.selectList
@@ -863,7 +868,7 @@ export default {
             icon_class: "",
             text: "重命名",
             custom_style: {
-              display: !this.submitRenameFunc ? 'none' : 'block',
+              display: !this.submitRenameFunc ? 'none' : 'flex',
             },
             click: (item) => {
               this.renameShow = true
@@ -874,7 +879,7 @@ export default {
             icon_class: "",
             text: "解散",
             custom_style: {
-              display: !this.disband_foldFunc ? 'none' : 'block',
+              display: !this.disband_foldFunc ? 'none' : 'flex',
             },
             click: (item) => {
               this.disband_fold(fold_item.id, fold_item[this.parentidKey] || "");
@@ -894,7 +899,7 @@ export default {
             icon_class: "icon-scissors",
             text: "剪切",
             custom_style: {
-              display: !this.pasteHereFunc ? 'none' : 'block',
+              display: !this.pasteHereFunc ? 'none' : 'flex',
             },
             click: (item) => {
               this.shearList = this.selectList
@@ -906,7 +911,7 @@ export default {
             icon_class: "",
             text: "重命名",
             custom_style: {
-              display: !this.submitRenameFunc ? 'none' : 'block',
+              display: !this.submitRenameFunc ? 'none' : 'flex',
             },
             click: (item) => {
               this.renameShow = true
@@ -937,7 +942,7 @@ export default {
     /**
      * 预览选中的图片
      */
-    previewSelect () {
+    previewSelect() {
       if (Array.isArray(this.selectList)) {
         const imageList = this.selectList.filter(item => !item[this.dirFlagKey])
         if (imageList.length === 1) {
@@ -959,7 +964,7 @@ export default {
      * 判断是否点击在项目上，如果不是返回false
      * @param {*} ev
      */
-    isClickOnItem (ev) {
+    isClickOnItem(ev) {
       const { clientX, clientY } = ev
       let flag = false
       for (let index = 0; index < this.list.length; index++) {
@@ -980,7 +985,7 @@ export default {
      * 父组件右键菜单
      * @param {*} ev
      */
-    containermenu (ev) {
+    containermenu(ev) {
       ev.stopPropagation();
       ev.preventDefault();
 
@@ -1026,7 +1031,7 @@ export default {
       this.$createRightMenu(ev.clientX, ev.clientY, rightMenuItems);
     },
 
-    containermousedown (ev) {
+    containermousedown(ev) {
       if (!this.isClickOnItem(ev)) {
         this.selectList = []
         document.onmousemove = null

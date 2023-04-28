@@ -2,12 +2,44 @@
 
 ## Project setup
 ```
-yarn install
+yarn add vue-hyui
+or
+npm i vue-hyui --save
 ```
 
 ### Compiles and hot-reloads for development
 ```
-yarn serve
+const props = {
+    fileKey: {
+        type: String,
+        default: 'file'
+    },
+    parentidKey: {
+        type: String,
+        default: 'parentid'
+    },
+    searchKey: {
+        type: String,
+        default: 'searchText'
+    },
+    pageKey: {
+        type: String,
+        default: "page"
+    },
+    pagesizeKey: {
+        type: String,
+        default: "pagesize"
+    },
+    dirNameKey: {
+        type: String,
+        default: "name"
+    },
+    // 必传，文件夹关键字段，默认dir
+    dirFlagKey: {
+        type: String,
+        default: "dir"
+    },
+}
 ```
 
 ### Compiles and minifies for production

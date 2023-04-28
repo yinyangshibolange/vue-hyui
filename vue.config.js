@@ -1,23 +1,6 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
-  transpileDependencies: true,
-  pages: {
-    index: {
-      entry: 'examples/main.js',
-      template: 'public/index.html',
-      filename: 'index.html'
-    }
-  },
-  // 扩展webpack配置，使packages加入编译
-  chainWebpack: config => {
-    config.module
-      .rule('js')
-      .include
-      .add('/package')
-      .end()
-      .use('babel')
-      .loader('babel-loader')
-      .tap(options => options);
-  }
+// 开发环境
+const devConfig = require('./config/config.dev');
+// 打包环境
+const buildConfig = require('./config/config.build');
+module.exports = process.env.NODE_ENV === 'production' ? buildConfig : devConfig;
 
-})
