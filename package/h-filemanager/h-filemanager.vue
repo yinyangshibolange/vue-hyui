@@ -224,6 +224,7 @@ export default {
   },
   mounted() {
     this.refreshImageList();
+    console.log(this.pidpaths)
 
   },
   methods: {
@@ -337,9 +338,9 @@ export default {
         }
         try {
           const { list, total } = await this.getImageListFunc(params)
-          if (list && list.length > 0) {
-            this.pidpaths[0][this.parentidKey] = list[0][this.parentidKey]
-          }
+          // if (list && list.length > 0) {
+          //   this.pidpaths[0][this.parentidKey] = list[0][this.parentidKey]
+          // }
           this.list = list;
           this.listTotal = total
           this.selectList = [];
@@ -558,6 +559,8 @@ export default {
      * @param {*} item
      */
     clickFoldItem(item) {
+        console.log(this.pidpaths)
+        
       if (item[this.dirFlagKey]) {
         this.pidpaths.push({
           [this.titleKey]: item[this.titleKey],
@@ -566,6 +569,8 @@ export default {
           pagesize: 10,
         });
         this.refreshImageList();
+
+        console.log(this.pidpaths)
       }
     },
     /**
@@ -644,19 +649,23 @@ export default {
      */
     clickPath(index) {
       console.log(index)
+  console.log(this.pidpaths)
       this.pidpaths = this.pidpaths.slice(0, index + 1);
       this.dataForm.page = this.pidpaths[this.pidpaths.length - 1].page
       this.dataForm.pagesize = this.pidpaths[this.pidpaths.length - 1].pagesize
+  console.log(this.pidpaths)
       this.getImageList();
     },
     /**
      * 返回面包屑上一层
      */
     pidback() {
+  console.log(this.pidpaths)
       this.pidpaths = this.pidpaths.slice(0, this.pidpaths.length - 1);
       this.dataForm.page = this.pidpaths[this.pidpaths.length - 1].page
       this.dataForm.pagesize = this.pidpaths[this.pidpaths.length - 1].pagesize
-      this.getImageList();
+  console.log(this.pidpaths)
+  this.getImageList();
     },
     /**
      * 开始拖拽项目
@@ -845,7 +854,7 @@ export default {
       if (fold_item[this.dirFlagKey]) {
         this.$createRightMenu(clientX, clientY, [
           {
-            icon_class: "icon-folder-opened",
+            icon_class: "iconfont icon-file-open",
             text: "打开",
             click: (item) => {
               this.clickFoldItem(fold_item);
@@ -853,7 +862,7 @@ export default {
             },
           },
           {
-            icon_class: "icon-scissors",
+            icon_class: "iconfont icon-jianqie",
             text: "剪切",
             custom_style: {
               display: !this.pasteHereFunc ? 'none' : 'flex',
@@ -889,14 +898,14 @@ export default {
       } else {
         this.$createRightMenu(clientX, clientY, [
           {
-            icon_class: "icon-download",
+            icon_class: "iconfont icon-download",
             text: "下载",
             click: (item) => {
               console.log(item);
             },
           },
           {
-            icon_class: "icon-scissors",
+            icon_class: "iconfont icon-jianqie",
             text: "剪切",
             custom_style: {
               display: !this.pasteHereFunc ? 'none' : 'flex',
@@ -921,7 +930,7 @@ export default {
             },
           },
           {
-            icon_class: "icon-delete",
+            icon_class: "iconfont icon-shanchu",
             text: "删除",
             click: (item) => {
               this.delItems()
@@ -929,7 +938,7 @@ export default {
             },
           },
           {
-            icon_class: "icon-view",
+            icon_class: "iconfont icon-zitiyulan",
             text: "预览",
             click: (item) => {
               this.previewSelect()
@@ -993,7 +1002,7 @@ export default {
 
       let rightMenuItems = [
         {
-          icon_class: "icon-upload2",
+          icon_class: "iconfont icon-upload",
           text: "上传",
           click: (item) => {
             this.upload()
@@ -1001,7 +1010,7 @@ export default {
           },
         },
         {
-          icon_class: "icon-folder-add",
+          icon_class: "iconfont icon-xinjianwenjianjia",
           text: "新建文件夹",
           click: (item) => {
             this.addDir()
@@ -1009,7 +1018,7 @@ export default {
           },
         },
         {
-          icon_class: "icon-refresh",
+          icon_class: "iconfont icon-shuaxin",
           text: "刷新",
           click: (item) => {
             this.getImageList()
@@ -1020,7 +1029,7 @@ export default {
       ]
       if (Array.isArray(this.shearList) && this.shearList.length > 0) {
         rightMenuItems.push({
-          icon_class: "",
+          icon_class: "iconfont icon-niantie",
           text: "粘贴",
           click: (item) => {
             this.pasteHere()

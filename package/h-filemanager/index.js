@@ -11,6 +11,7 @@ import hForm from "../h-form"
 import hInput from "../h-input"
 import hFilemanager from './h-filemanager.vue'
 import "../common/modules/h-filemanager.scss"
+import "../common/fonts/iconfont.css"
 import hevueImgPreview from 'hevue-img-preview'
 export default (app) => {
     app.use(hLoading)

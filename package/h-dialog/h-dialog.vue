@@ -1,22 +1,25 @@
 <template>
     <div v-show="visible" class="h-dialog ">
         <div v-show="showMask" class="h-dialog-mask" @click="maskClose" :style="{
-                zIndex: zIndex,
-                ...maskStyle,
-            }">
+            zIndex: zIndex,
+            ...maskStyle,
+        }">
 
             <div class="h-dialog-container" @click.stop :style="{
-                    zIndex: zIndex + 1,
-                    width: typeof width === 'number' ? width + 'px' : width,
-                    ...contentStyle,
-                }">
+                zIndex: zIndex + 1,
+                width: typeof width === 'number' ? width + 'px' : width,
+                padding: containerPadding ? containerPadding : '20px',
+                ...containerStyle,
+            }">
                 <div v-show="showHeader" class="h-dialog-header">
                     <slot name="header"></slot>
                 </div>
                 <div v-show="title && !showHeader" class="h-dialog-header">
-                    <div  class="h-dialog-title">{{ title }}</div>
+                    <div class="h-dialog-title">{{ title }}</div>
                 </div>
-                <div class="h-dialog-content">
+                <div class="h-dialog-content" :style="{
+                    paddingTop: showHeader? '20px' : '0',
+                }">
                     <slot></slot>
                 </div>
 
@@ -54,25 +57,29 @@ export default {
             type: Object,
             default: () => ({})
         },
-        contentStyle: {
+        containerStyle: {
             type: Object,
             default: () => ({})
         },
         title: {
             type: String,
             default: '' // This prop is used for the title of the dialog and should be of type "字符型" (string).
+        },
+        containerPadding: {
+            type: String,
+            default: ''
         }
     },
     computed: {
-        showFooter() {
+        showFooter () {
             return !!this.$slots.footer
         },
-        showHeader() {
+        showHeader () {
             return !!this.$slots.header
         }
     },
     watch: {
-        visible(vs) {
+        visible (vs) {
             if (vs) {
                 document.body.style.overflow = 'hidden'
             } else {
@@ -81,7 +88,7 @@ export default {
         }
     },
     methods: {
-        maskClose() {
+        maskClose () {
             if (this.clickMaskClose) {
                 this.$emit("update:visible", false)
                 this.$emit("close")
@@ -128,7 +135,6 @@ export default {
         margin: auto auto;
         background: #fff;
         border-radius: 12px;
-        padding: 20px;
         min-height: 200px;
         box-shadow: var(--h-box-shadow-small);
 
@@ -143,7 +149,7 @@ export default {
     }
 
     .h-dialog-content {
-        padding-top: 20px;
+        
     }
 
     .h-dialog-footer {

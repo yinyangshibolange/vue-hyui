@@ -25,7 +25,7 @@
     </div>
 
     <div>
-      <h-dialog :visible.sync="filemanagerShow" append-to-body width="fit-content">
+      <h-dialog :visible.sync="filemanagerShow" append-to-body width="fit-content" containerPadding="0">
         <!-- uploadFunc: Function, // 上传
     getImageListFunc: Function, // 获取列表
     submitDirFunc: Function, // 新增文件夹
@@ -54,7 +54,6 @@ export default {
     return {
       inputval: "",
       swiperList: [],
-   
 
       filemanagerShow: false,
 
@@ -83,6 +82,7 @@ export default {
         const res = await this.$axios.get(
           `/api/imageList${concatParams(params)}`
         );
+        console.log(res)
         if (res.code === 0) {
           return {
             list: res.data.list,
